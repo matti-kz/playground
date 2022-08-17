@@ -64,4 +64,4 @@ kubectl patch deployment "ingress-nginx-controller" \
 
 `helm install argocd argo/argo-cd -n argocd --values ./playground/argocd/values.yaml`
 
-`kubectl apply -f ./playground/apps/infrastructure.yaml`
+`kubectl apply -f ./playground/argocd/apps-of-apps.yaml`
