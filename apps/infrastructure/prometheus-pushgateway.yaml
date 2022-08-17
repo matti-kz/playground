@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure-portfolio
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 39.8.0
+    chart: kube-prometheus-stack
+    helm:
+      values: |
+        alertmanager:
+          ingress:
+            enabled: true
+            hosts:
+              - alertmanager.local.gd
+            tls:
+              - secretName: local-tls
+                hosts:
+                  - alertmanager.local.gd
+        grafana:
+          namespaceOverride: "grafana"
+          adminPassword: "asdasd"
+          ingress:
+            enabled: true
+            hosts:
+              - grafana.local.gd
+            tls:
+              - secretName: local-tls
+                hosts:
+                  - grafana.local.gd
+        prometheus:
+          ingress:
+            enabled: true
+            hosts:
+              - prometheus.local.gd
+            tls:
+              - secretName: local-tls
+                hosts:
+                  - prometheus.local.gd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prometheus
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - Validate=true
+    - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
