@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prometheus-pushgateway
+  name: kube-prometheus-stack
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -9,18 +9,40 @@ spec:
   project: infrastructure-portfolio
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
-    targetRevision: 1.18.2
-    chart: prometheus-pushgateway
+    targetRevision: 39.8.0
+    chart: kube-prometheus-stack
     helm:
+      skipCrds: true
       values: |
-        ingress:
-          enabled: true
-          hosts:
-            - pushgateway.local.gd
-          tls:
-            - secretName: local-tls
-              hosts:
-                - pushgateway.local.gd
+        alertmanager:
+          ingress:
+            enabled: true
+            hosts:
+              - alertmanager.local.gd
+            tls:
+              - secretName: local-tls
+                hosts:
+                  - alertmanager.local.gd
+        grafana:
+          namespaceOverride: "grafana"
+          adminPassword: "asdasd"
+          ingress:
+            enabled: true
+            hosts:
+              - grafana.local.gd
+            tls:
+              - secretName: local-tls
+                hosts:
+                  - grafana.local.gd
+        prometheus:
+          ingress:
+            enabled: true
+            hosts:
+              - prometheus.local.gd
+            tls:
+              - secretName: local-tls
+                hosts:
+                  - prometheus.local.gd
   destination:
     server: https://kubernetes.default.svc
     namespace: prometheus
