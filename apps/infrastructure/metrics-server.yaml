@@ -11,6 +11,10 @@ spec:
     repoURL: https://charts.bitnami.com/bitnami
     targetRevision: 6.0.12
     chart: metrics-server
+    helm:
+      values: |
+        extraArgs:
+          - --kubelet-insecure-tls=true
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
