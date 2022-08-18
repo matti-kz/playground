@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeapps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    notifications.argoproj.io/subscribe.on-deployed.pushgateway: ""
+spec:
+  project: web-portfolio
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: 10.2.1
+    chart: kubeapps
+    helm:
+      values: |
+        ingress:
+          enabled: true
+          hostname: kubeapps.local.gd
+          tls: true
+          extraTls:
+            - secretName: local-tls
+              hosts:
+                - kubeapps.local.gd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeapps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - Validate=true
+    - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
