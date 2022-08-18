@@ -31,14 +31,6 @@ EOF
 
 _See docs: https://kind.sigs.k8s.io/docs/user/ingress/_
 
-## Prepare namespaces
-
-```
-kubectl create ns argocd
-kubectl create ns grafana
-kubectl create ns prometheus
-```
-
 # Install components
 
 ## Nginx Ingress
@@ -49,7 +41,7 @@ _For creating local cert see: https://github.com/FiloSottile/mkcert_
 
 `mkcert "*.local.gd"`
 
-`kubectl create secret tls local-tls --key ./playground/nginx/local.gd+3-key.pem --cert ./playground/nginx/local.gd+3.pem -n ingress-nginx`
+`kubectl create secret tls local-tls --key ./nginx/local.gd+3-key.pem --cert ./nginx/local.gd+3.pem -n ingress-nginx`
 
 ```
 kubectl patch deployment "ingress-nginx-controller" \
@@ -62,6 +54,6 @@ kubectl patch deployment "ingress-nginx-controller" \
 
 `helm repo add argo https://argoproj.github.io/argo-helm`
 
-`helm install argocd argo/argo-cd -n argocd --values ./playground/argocd/values.yaml`
+`helm install argocd argo/argo-cd -n argocd --values ./argocd/values.yaml --create-namespace`
 
-`kubectl apply -f ./playground/argocd/apps-of-apps.yaml`
+`kubectl apply -f ./argocd/app-of-apps.yaml`

@@ -24,7 +24,6 @@ spec:
                 hosts:
                   - alertmanager.local.gd
         grafana:
-          namespaceOverride: "grafana"
           adminPassword: "asdasd"
           ingress:
             enabled: true
