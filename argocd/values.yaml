@@ -2305,7 +2305,7 @@ notifications:
   ## For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/
   notifiers:
     service.webhook.pushgateway: |
-      url: http://pushgateway-prometheus-pushgateway.prometheus.svc.cluster.local:9091/metrics
+      url: http://prometheus-pushgateway.prometheus.svc.cluster.local:9091/metrics
     # service.slack: |
     #   token: $slack-token
 
@@ -2410,9 +2410,9 @@ notifications:
       webhook:
         pushgateway:
           method: POST
-          path: /job/{{.app.metadata.name}}
+          path: /job/{{.app.metadata.name}}/timestamp/{{.app.metadata.creationTimestamp}}
           body: |
-            argocd_app_deployment{name="{{.app.metadata.name}}",image_tag="{{.app.metadata.labels.imageTag}}",dest_namespace="{{.app.spec.destination.namespace}}",project="{{.app.spec.project}}",helm_chart_target_revision="{{.app.metadata.source.targetRevision}}",helm_chart="{{.app.metadata.source.path}}",commit_author="{{ (call .repo.GetCommitMetadata .app.status.sync.revision).Author }}",commit_date="{{ (call .repo.GetCommitMetadata .app.status.sync.revision).Date }}"} 1
+            argocd_app_deployment{name="{{.app.metadata.name}}",image_tag="{{.app.metadata.labels.imageTag}}",dest_namespace="{{.app.spec.destination.namespace}}",project="{{.app.spec.project}}",helm_chart_target_revision="{{.app.spec.source.targetRevision}}",helm_chart="{{.app.spec.source.path}}"} 1
     # template.app-deployed: |
     #   email:
     #     subject: New version of an application {{.app.metadata.name}} is up and running.
@@ -2632,13 +2632,13 @@ notifications:
 
   # -- The trigger defines the condition when the notification should be sent
   ## For more information: https://argocd-notifications.readthedocs.io/en/stable/triggers/
-  triggers: {}
-    # trigger.on-deployed: |
-    #   - description: Application is synced and healthy. Triggered once per commit.
-    #     oncePer: app.status.sync.revision
-    #     send:
-    #     - app-deployed
-    #     when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+  triggers:
+    trigger.on-deployed: |
+      - description: Application is synced and healthy. Triggered once per commit.
+        oncePer: app.status.sync.revision
+        send:
+        - app-deployed
+        when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
     # trigger.on-health-degraded: |
     #   - description: Application has degraded
     #     send:

@@ -8,14 +8,17 @@ metadata:
 spec:
   project: infrastructure-portfolio
   source:
-    repoURL: https://charts.bitnami.com/bitnami
-    targetRevision: 6.0.12
+    repoURL: https://kubernetes-sigs.github.io/metrics-server
+    targetRevision: 3.8.2
     chart: metrics-server
     helm:
       values: |
-        extraArgs:
+        defaultArgs:
+          - --cert-dir=/tmp
+          - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+          - --kubelet-use-node-status-port
+          - --metric-resolution=15s
           - --kubelet-insecure-tls=true
-          - --kubelet-preferred-address-types=InternalIP
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
