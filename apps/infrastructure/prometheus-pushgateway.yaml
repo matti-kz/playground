@@ -13,6 +13,9 @@ spec:
     chart: prometheus-pushgateway
     helm:
       values: |
+        serviceMonitor:
+          enabled: true
+          namespace: prometheus
         ingress:
           enabled: true
           hosts:

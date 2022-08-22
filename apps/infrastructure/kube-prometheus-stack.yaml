@@ -42,6 +42,14 @@ spec:
               - secretName: local-tls
                 hosts:
                   - prometheus.local.gd
+          prometheusSpec:
+            additionalScrapeConfigs: []
+            podMonitorSelectorNilUsesHelmValues: false
+            serviceMonitorSelectorNilUsesHelmValues: false
+            ruleSelectorNilUsesHelmValues: false
+            retention: 7d
+            namespaceSelector:
+              any: true
   destination:
     server: https://kubernetes.default.svc
     namespace: prometheus

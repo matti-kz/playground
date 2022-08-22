@@ -7,6 +7,7 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     notifications.argoproj.io/subscribe.on-deployed.pushgateway: ""
+    commitUrl: "https://www.google.com/search?q=asd"
 spec:
   project: web-portfolio
   source:
@@ -31,8 +32,8 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - Validate=true
-    - CreateNamespace=true
+      - Validate=true
+      - CreateNamespace=true
     retry:
       limit: 5
       backoff:
